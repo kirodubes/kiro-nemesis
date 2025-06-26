@@ -152,10 +152,12 @@ echo
 installed_dir=$(dirname $(readlink -f $(basename `pwd`)))
 cd $installed_dir/Personal
 
+# chadwm autologin
+sh fix-sddm-conf
+
 sh 900-*
 sh 910-*
 sh 920-*
-sh 930-*
 sh 990-*
 sh 999-*
 

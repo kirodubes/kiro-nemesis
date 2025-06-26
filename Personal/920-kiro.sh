@@ -36,40 +36,56 @@ fi
 
 ##################################################################################################################################
 
-if [ ! -f /etc/dev-rel ] ; then 
+echo
+tput setaf 3
+echo "########################################################################"
+echo "################### FOR KIRO"
+echo "########################################################################"
+tput sgr0
+echo
 
-	if grep -q "Arch Linux" /etc/os-release; then
+echo
+echo "Adding nanorc settings"
+echo
 
-		echo
-		tput setaf 2
-		echo "########################################################################"
-		echo "################### We are on ARCH LINUX"
-		echo "########################################################################"
-		tput sgr0
-		
-		echo
-		echo "Adding font to /etc/vconsole.conf"
-
-		echo
-		if ! grep -q "FONT=lat4-19" /etc/vconsole.conf; then
-		echo '
-FONT=lat4-19' | sudo tee --append /etc/vconsole.conf
-		fi
-
-		# have aliases when in arch-chroot
-		sudo cp -arf /etc/skel/. /root
-
-		echo
-		tput setaf 6
-		echo "########################################################################"
-		echo "################### Done"
-		echo "########################################################################"
-		tput sgr0
-		echo
-
-	fi
-
+if [ -f /etc/nanorc ]; then
+    sudo cp $installed_dir/settings/nano/nanorc /etc/nanorc-kiro
 fi
+
+echo
+echo "Enable fstrim timer"
+sudo systemctl enable fstrim.timer
+
+
+echo
+echo "Testing if qemu agent is still active"
+result=$(systemd-detect-virt)
+echo "Systemd-detect-virt = "
+test=$(systemctl is-enabled qemu-guest-agent.service)
+echo "Is qemu guest agent active = "
+echo "If one of the parameters is empty you get unary parameter"
+echo "Nothing is wrong however"
+if [ $test == "enabled" ] && [ $result == "none" ] || [ $result == "oracle" ]; then
+	echo
+	echo "Disable qemu agent service"
+	sudo systemctl disable qemu-guest-agent.service
+	echo
+fi
+
+
+
+# personal /etc/pacman.d/gnupg/gpg.conf for Erik Dubois
+
+echo
+tput setaf 2
+echo "################################################################################"
+echo "Copying gpg.conf to /etc/pacman.d/gnupg/gpg.conf"
+echo "################################################################################"
+tput sgr0
+echo
+sudo cp -v gpg.conf /etc/pacman.d/gnupg/gpg.conf
+echo
+
 
 echo
 tput setaf 6
