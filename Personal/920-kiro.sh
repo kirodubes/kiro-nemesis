@@ -49,13 +49,12 @@ echo "Adding nanorc settings"
 echo
 
 if [ -f /etc/nanorc ]; then
-    sudo cp $installed_dir/settings/nano/nanorc /etc/nanorc-kiro
+    sudo cp $installed_dir/settings/nano/nanorc /etc/nanorc
 fi
 
 echo
 echo "Enable fstrim timer"
 sudo systemctl enable fstrim.timer
-
 
 echo
 echo "Testing if qemu agent is still active"
