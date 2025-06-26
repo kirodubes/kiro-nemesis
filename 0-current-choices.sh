@@ -37,7 +37,7 @@ on_error() {
 installed_dir="$(dirname "$(readlink -f "$0")")"
 
 # Debug mode switch
-export DEBUG=true
+export DEBUG=false
 
 if [ "$DEBUG" = true ]; then
     echo
@@ -135,7 +135,7 @@ fi
 echo
 tput setaf 3
 echo "################################################################################"
-echo "End of package installation"
+echo "End build from AUR"
 echo "################################################################################"
 tput sgr0
 echo
