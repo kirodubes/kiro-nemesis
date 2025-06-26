@@ -141,3 +141,29 @@ echo "End of package installation"
 echo "################################################################################"
 tput sgr0
 echo
+
+
+echo
+tput setaf 3
+echo "########################################################################"
+echo "################### Going to the Personal folder"
+echo "########################################################################"
+tput sgr0
+echo
+
+installed_dir=$(dirname $(readlink -f $(basename `pwd`)))
+cd $installed_dir/Personal
+
+sh 900-*
+sh 910-*
+sh 920-*
+sh 930-*
+sh 990-*
+sh 999-*
+
+
+tput setaf 3
+echo "########################################################################"
+echo "End current choices"
+echo "########################################################################"
+tput sgr0
