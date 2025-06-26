@@ -53,13 +53,11 @@ fi
 
 install_packages() {
     local packages=(
-        discord
         dropbox
         insync
         signal-desktop
         signal-in-tray
         spotify
-        telegram-desktop
     )
 
     for pkg in "${packages[@]}"; do
