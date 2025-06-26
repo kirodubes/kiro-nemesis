@@ -2,6 +2,7 @@
 
 A bunch of scripts and settings to tweak the system on a daily basis
 
+
 ![Kiro Logo](kiro.jpg)
 
 **Kiro** is a customizable Arch Linux ISO builder based on the ArcoLinux project. It provides a simple way to build your own Arch-based installation medium with your choice of packages, settings, and scripts.
