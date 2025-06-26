@@ -55,6 +55,7 @@ install_packages() {
     local packages=(
         dropbox
         insync
+        filezilla
         signal-desktop
         signal-in-tray
     )
