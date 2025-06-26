@@ -53,9 +53,13 @@ fi
 
 install_packages() {
     local packages=(
-        insync
+        discord
         dropbox
+        insync
+        signal-desktop
+        signal-in-tray
         spotify
+        telegram-desktop
     )
 
     for pkg in "${packages[@]}"; do
@@ -64,6 +68,24 @@ install_packages() {
         sudo pacman -S --noconfirm --needed "$pkg"
     done
 }
+
+remove_if_installed() {
+    for pattern in "$@"; do
+        # Find all installed packages that match the pattern (exact + variants)
+        matches=$(pacman -Qq | grep "^${pattern}$\|^${pattern}-")
+        
+        if [ -n "$matches" ]; then
+            for pkg in $matches; do
+                echo "Removing package: $pkg"
+                sudo pacman -R --noconfirm "$pkg"
+            done
+        else
+            echo "No packages matching '$pattern' are installed."
+        fi
+    done
+}
+
+##############################################################################################################
 
 echo
 tput setaf 2
@@ -78,12 +100,39 @@ sudo pacman -Syyu --noconfirm
 echo
 tput setaf 2
 echo "################################################################################"
+echo "Removing selected packages"
+echo "################################################################################"
+tput sgr0
+echo
+
+remove_if_installed adobe-source-han-sans-cn-fonts
+remove_if_installed adobe-source-han-sans-jp-fonts
+remove_if_installed adobe-source-han-sans-kr-fonts
+
+echo
+tput setaf 2
+echo "################################################################################"
 echo "Installing selected packages"
 echo "################################################################################"
 tput sgr0
 echo
 
 install_packages
+
+echo
+tput setaf 2
+echo "########################################################################"
+echo "################### Build from AUR"
+echo "########################################################################"
+tput sgr0
+echo
+
+if ! pacman -Qi opera &>/dev/null; then
+    yay -S opera --noconfirm
+else
+    echo "Opera is already installed."
+fi
+
 
 echo
 tput setaf 3
