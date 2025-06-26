@@ -78,7 +78,6 @@ echo
 echo "Brave no gnome-keyring popup"
 echo
 cp  $installed_dir/settings/brave/brave-browser.desktop $HOME/.local/share/applications/brave-browser.desktop
-echo
 
 echo
 echo "Sublime text settings"
