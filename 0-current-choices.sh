@@ -57,7 +57,6 @@ install_packages() {
         insync
         signal-desktop
         signal-in-tray
-        spotify
     )
 
     for pkg in "${packages[@]}"; do
