@@ -64,11 +64,11 @@ test=$(systemctl is-enabled qemu-guest-agent.service)
 echo "Is qemu guest agent active = "
 echo "If one of the parameters is empty you get unary parameter"
 echo "Nothing is wrong however"
-if [ $test == "enabled" ] && [ $result == "none" ] || [ $result == "oracle" ]; then
-	echo
-	echo "Disable qemu agent service"
-	sudo systemctl disable qemu-guest-agent.service
-	echo
+if [ "$test" == "enabled" ] && { [ "$result" == "none" ] || [ "$result" == "oracle" ]; }; then
+    echo
+    echo "Disable qemu agent service"
+    sudo systemctl disable qemu-guest-agent.service 2>/dev/null
+    echo
 fi
 
 
