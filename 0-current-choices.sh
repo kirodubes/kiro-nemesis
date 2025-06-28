@@ -53,7 +53,6 @@ fi
 
 install_packages() {
     local packages=(
-        dropbox
         insync
         filezilla
         signal-desktop
