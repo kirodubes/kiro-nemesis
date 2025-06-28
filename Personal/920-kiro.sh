@@ -59,7 +59,6 @@ sudo systemctl enable fstrim.timer
 echo
 echo "Testing if qemu agent is still active"
 result=$(systemd-detect-virt)
-echo "Systemd-detect-virt = "
 test=$(systemctl is-enabled qemu-guest-agent.service)
 if [ "$test" == "enabled" ] && { [ "$result" == "none" ] || [ "$result" == "oracle" ]; }; then
     echo
