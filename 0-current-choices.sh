@@ -105,6 +105,11 @@ echo
 remove_if_installed adobe-source-han-sans-cn-fonts
 remove_if_installed adobe-source-han-sans-jp-fonts
 remove_if_installed adobe-source-han-sans-kr-fonts
+remove_if_installed xfsprogs
+remove_if_installed btrfs-progs
+remove_if_installed jfsutils
+remove_if_installed mkinitcpio-nfs-utils
+remove_if_installed xfburn
 
 echo
 tput setaf 2
