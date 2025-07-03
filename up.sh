@@ -27,6 +27,8 @@ set -eo pipefail
 # variables and functions
 workdir=$(pwd)
 
+##################################################################################################################
+
 # Below command will backup everything inside the project folder
 git add --all .
 
