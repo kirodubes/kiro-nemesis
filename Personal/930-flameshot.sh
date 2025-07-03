@@ -52,9 +52,9 @@ sudo rm /usr/share/icons/hicolor/48x48/apps/flameshot.png
 sudo rm /usr/share/icons/hicolor/128x128/apps/org.flameshot.Flameshot.png
 sudo rm /usr/share/icons/hicolor/48x48/apps/org.flameshot.Flameshot.png
 
-gtk-update-icon-cache -f /usr/share/icons/al-beautyline
-gtk-update-icon-cache -f /usr/share/icons/al-candy-icons
-gtk-update-icon-cache -f /usr/share/icons/neo-candy-icons
+sudo gtk-update-icon-cache -f /usr/share/icons/al-beautyline
+sudo gtk-update-icon-cache -f /usr/share/icons/al-candy-icons
+sudo gtk-update-icon-cache -f /usr/share/icons/neo-candy-icons
 
 #sudo cp  $installed_dir/settings/flameshot/org.flameshot.Flameshot.svg /usr/share/icons/hicolor/128x128/apps/flameshot.svg
 #sudo cp  $installed_dir/settings/flameshot/org.flameshot.Flameshot.svg /usr/share/icons/hicolor/48x48/apps/flameshot.svg
