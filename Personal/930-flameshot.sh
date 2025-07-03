@@ -47,6 +47,12 @@ echo
 sudo rm /usr/share/icons/hicolor/scalable/apps/flameshot.svg
 sudo rm /usr/share/icons/hicolor/scalable/apps/org.flameshot.Flameshot.svg
 
+sudo rm /usr/share/icons/hicolor/128x128/apps/flameshot.png
+sudo rm /usr/share/icons/hicolor/48x48/apps/flameshot.png
+sudo rm /usr/share/icons/hicolor/128x128/apps/org.flameshot.Flameshot.png
+sudo rm /usr/share/icons/hicolor/48x48/apps/org.flameshot.Flameshot.png
+
+
 exit 1
 
 sudo cp  $installed_dir/settings/flameshot/org.flameshot.Flameshot.svg /usr/share/icons/hicolor/128x128/apps/flameshot.svg
