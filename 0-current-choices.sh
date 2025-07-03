@@ -54,7 +54,6 @@ fi
 install_packages() {
     local packages=(
         insync
-        filezilla
         signal-desktop
         signal-in-tray
     )
