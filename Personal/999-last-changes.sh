@@ -117,6 +117,40 @@ echo "Wait for it ..."
 sudo hardcode-fixer
 
 echo
+tput setaf 2
+echo "########################################################################"
+echo "################### Want to go to fish or stay in bash"
+echo "########################################################################"
+tput sgr0
+echo
+echo
+
+# Confirm the Fish shell is installed
+if ! command -v fish &> /dev/null; then
+    echo "Fish shell is not installed. Install it first (e.g., sudo pacman -S fish)"
+    exit 1
+fi
+
+# Show current shell
+echo
+echo "########################################################################"
+echo "Current shell: $SHELL"
+echo "########################################################################"
+echo
+
+# Prompt the user
+read -rp "Do you want to switch your default shell to Fish? [Y/n] " answer
+
+# Convert to lowercase and check
+if [[ "$answer" =~ ^[Yy]$ || -z "$answer" ]]; then
+    echo "Changing default shell to Fish..."
+    sudo chsh "$USER" -s /bin/fish
+    echo "Shell changed. It will apply after you log out and log back in."
+else
+    echo "Shell change cancelled. Staying on Bash"
+fi
+
+echo
 tput setaf 6
 echo "##############################################################"
 echo "###################  $(basename $0) done"

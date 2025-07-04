@@ -158,10 +158,6 @@ echo
 #uncommenting so that we see the bluetooth icon in our toolbars
 gsettings set org.blueberry use-symbolic-icons false
 
-echo "Tofish we go"
-echo
-sudo chsh $USER -s /bin/fish
-
 echo
 echo "VirtualBox check - copy/paste template or not"
 echo
