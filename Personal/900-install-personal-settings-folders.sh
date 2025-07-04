@@ -166,12 +166,11 @@ echo
 echo "VirtualBox check - copy/paste template or not"
 echo
 
+# Detect shell and assign result accordingly
 if [ -n "$BASH_VERSION" ]; then
     result=$(systemd-detect-virt)
-    echo "Detected (bash): $result"
 elif [ -n "$FISH_VERSION" ]; then
-    echo "Run this script with bash, not fish"
-    exit 1
+    set result (systemd-detect-virt)
 else
     echo "Unsupported shell"
     exit 1
