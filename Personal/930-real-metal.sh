@@ -103,6 +103,51 @@ remove_if_installed() {
 
 ##############################################################################################################
 
+result=$(systemd-detect-virt)
+
+tput setaf 3
+echo "########################################################################"
+echo "################### VirtualBox check - copy/paste template or not"
+echo "########################################################################"
+tput sgr0
+echo
+
+if [ $result = "none" ];then
+
+    [ -d $HOME"/VirtualBox VMs" ] || mkdir -p $HOME"/VirtualBox VMs"
+    sudo cp -rf settings/virtualbox-template/* ~/VirtualBox\ VMs/
+    cd ~/VirtualBox\ VMs/
+    tar -xzf template.tar.gz
+    rm -f template.tar.gz   
+
+else
+
+    echo
+    tput setaf 3
+    echo "########################################################################"
+    echo "### You are on a virtual machine - skipping VirtualBox"
+    echo "### Template not copied over"
+    echo "### We will set your screen resolution with xrandr"
+    echo "########################################################################"
+    tput sgr0
+    echo
+
+    # Find the connected VirtualBox display
+    OUTPUT=$(xrandr | grep " connected" | awk '{print $1}')
+
+    # Fallback check
+    if [ -z "$OUTPUT" ]; then
+        echo "No connected display found."
+        exit 1
+    fi
+
+    # Apply desired resolution and position
+    xrandr --output "$OUTPUT" --primary --mode 1920x1080 --pos 0x0 --rotate normal
+
+    echo "Display settings applied to output: $OUTPUT"
+
+    fi
+
 tput setaf 3
 echo "########################################################################"
 echo "################### Removal of virtual machine software"
@@ -110,12 +155,8 @@ echo "########################################################################"
 tput sgr0
 echo
 
-# Detect virtualization environment
-vm_type=$(systemd-detect-virt)
-echo "Detected environment: $vm_type"
-
 # Proceed only if running on real hardware
-if [[ "$vm_type" == "none" ]]; then
+if [[ "$result" == "none" ]]; then
     echo "Running on real hardware. Proceeding with cleanup..."
 
     # Disable and stop qemu-guest-agent.service if present
@@ -133,27 +174,12 @@ if [[ "$vm_type" == "none" ]]; then
     fi
 
     # Remove QEMU packages
-    qemu_pkgs="qemu-guest-agent"
-    if [[ -n "$qemu_pkgs" ]]; then
-        echo "Removing QEMU packages: $qemu_pkgs"
-        sudo pacman -Rns --noconfirm $qemu_pkgs
-    else
-        echo "No QEMU packages found."
-    fi
-
+    sudo pacman -Rns --noconfirm qemu-guest-agent
     # Remove VirtualBox packages
-    vbox_pkgs="virtualbox-guest-utils"
-    if [[ -n "$vbox_pkgs" ]]; then
-        echo "Removing VirtualBox packages: $vbox_pkgs"
-        sudo pacman -Rns --noconfirm $vbox_pkgs
-    else
-        echo "No VirtualBox packages found."
-    fi
-
-    echo "Cleanup complete."
+    sudo pacman -Rns --noconfirm virtualbox-guest-utils
 
 else
-    echo "Virtual machine detected ($vm_type). No action taken."
+    echo "Virtual machine detected ($result). No action taken."
 fi
 
 echo
