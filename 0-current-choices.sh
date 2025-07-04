@@ -27,8 +27,6 @@ set -uo pipefail  # Do not use set -e, we want to continue on error
 #tput sgr0
 ##################################################################################################################################
 
-set -uo pipefail  # safer error handling (no unbound vars, no silent pipe fails)
-
 # Error handling
 trap 'on_error $LINENO "$BASH_COMMAND"' ERR
 
@@ -50,8 +48,12 @@ on_error() {
     sleep 10
 }
 
+##################################################################################################################################
+
 # Get current directory of the script
 installed_dir="$(dirname "$(readlink -f "$0")")"
+
+##################################################################################################################################
 
 # Debug mode switch
 export DEBUG=false
@@ -81,6 +83,8 @@ install_packages() {
         sudo pacman -S --noconfirm --needed "$pkg"
     done
 }
+
+##################################################################################################################################
 
 remove_if_installed() {
     for pattern in "$@"; do
@@ -118,14 +122,15 @@ echo "##########################################################################
 tput sgr0
 echo
 
-remove_if_installed adobe-source-han-sans-cn-fonts
-remove_if_installed adobe-source-han-sans-jp-fonts
-remove_if_installed adobe-source-han-sans-kr-fonts
-remove_if_installed xfsprogs
-remove_if_installed btrfs-progs
-remove_if_installed jfsutils
-remove_if_installed mkinitcpio-nfs-utils
-remove_if_installed xfburn
+remove_if_installed \
+    adobe-source-han-sans-cn-fonts \
+    adobe-source-han-sans-jp-fonts \
+    adobe-source-han-sans-kr-fonts \
+    xfsprogs \
+    btrfs-progs \
+    jfsutils \
+    mkinitcpio-nfs-utils \
+    xfburn
 
 echo
 tput setaf 2
@@ -146,11 +151,14 @@ tput sgr0
 echo
 
 if ! pacman -Qi opera &>/dev/null; then
-    yay -S opera --noconfirm
+    if command -v yay >/dev/null 2>&1; then
+        yay -S opera --noconfirm
+    else
+        echo "Yay is not installed. Skipping Opera installation."
+    fi
 else
     echo "Opera is already installed."
 fi
-
 
 echo
 tput setaf 3
@@ -169,17 +177,15 @@ echo "########################################################################"
 tput sgr0
 echo
 
-installed_dir=$(dirname $(readlink -f $(basename `pwd`)))
-cd $installed_dir/Personal
+cd "$installed_dir/Personal" || { echo "Cannot cd to $installed_dir/Personal"; exit 1; }
 
 # chadwm autologin
-sh fix-sddm-conf
+# Run scripts if they exist and are executable
+[[ -x fix-sddm-conf ]] && ./fix-sddm-conf
 
-sh 900-*
-sh 910-*
-sh 920-*
-sh 990-*
-sh 999-*
+for script in 900-* 910-* 920-* 990-* 999-*; do
+    [[ -x "$script" ]] && ./"$script"
+done
 
 
 tput setaf 3
