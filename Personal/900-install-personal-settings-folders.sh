@@ -166,7 +166,16 @@ echo
 echo "VirtualBox check - copy/paste template or not"
 echo
 
-result=$(systemd-detect-virt)
+# Detect shell and assign result accordingly
+if [ -n "$BASH_VERSION" ]; then
+    result=$(systemd-detect-virt)
+elif [ -n "$FISH_VERSION" ]; then
+    set result (systemd-detect-virt)
+else
+    echo "Unsupported shell"
+    exit 1
+fi
+
 if [ $result = "none" ];then
 
 	[ -d $HOME"/VirtualBox VMs" ] || mkdir -p $HOME"/VirtualBox VMs"

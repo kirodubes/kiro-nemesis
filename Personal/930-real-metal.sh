@@ -112,6 +112,16 @@ tput sgr0
 echo
 
 # Detect virtualization environment
+# Detect shell and assign result accordingly
+if [ -n "$BASH_VERSION" ]; then
+    vm_type=$(systemd-detect-virt)
+elif [ -n "$FISH_VERSION" ]; then
+    set vm_type (systemd-detect-virt)
+else
+    echo "Unsupported shell"
+    exit 1
+fi
+
 vm_type=$(systemd-detect-virt)
 echo "Detected environment: $vm_type"
 
