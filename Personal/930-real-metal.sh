@@ -27,29 +27,6 @@ set -uo pipefail  # Do not use set -e, we want to continue on error
 #tput sgr0
 ##################################################################################################################################
 
-# Error handling
-trap 'on_error $LINENO "$BASH_COMMAND"' ERR
-
-on_error() {
-    local lineno="$1"
-    local cmd="$2"
-
-    local RED=$(tput setaf 1)
-    local YELLOW=$(tput setaf 3)
-    local RESET=$(tput sgr0)
-
-    echo
-    echo "${RED}ERROR DETECTED${RESET}"
-    echo "${YELLOW}Line: $lineno"
-    echo "Command: '$cmd'"
-    echo "Waiting 10 seconds before continuing...${RESET}"
-    echo
-
-    sleep 10
-}
-
-##################################################################################################################################
-
 # Get current directory of the script
 installed_dir="$(dirname "$(readlink -f "$0")")"
 
@@ -105,6 +82,9 @@ remove_if_installed() {
 
 result=$(systemd-detect-virt)
 
+echo
+echo "result = "$result
+echo
 tput setaf 3
 echo "########################################################################"
 echo "################### VirtualBox check - copy/paste template or not"
@@ -174,9 +154,9 @@ if [[ "$result" == "none" ]]; then
     fi
 
     # Remove QEMU packages
-    sudo pacman -Rns --noconfirm qemu-guest-agent
+    remove_if_installed qemu-guest-agent
     # Remove VirtualBox packages
-    sudo pacman -Rns --noconfirm virtualbox-guest-utils
+    remove_if_installed virtualbox-guest-utils
 
 else
     echo "Virtual machine detected ($result). No action taken."
