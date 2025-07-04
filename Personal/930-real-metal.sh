@@ -133,7 +133,7 @@ if [[ "$vm_type" == "none" ]]; then
     fi
 
     # Remove QEMU packages
-    qemu_pkgs=$(pacman -Qsq '^qemu' 2>/dev/null)
+    qemu_pkgs="qemu-guest-agent"
     if [[ -n "$qemu_pkgs" ]]; then
         echo "Removing QEMU packages: $qemu_pkgs"
         sudo pacman -Rns --noconfirm $qemu_pkgs
@@ -142,7 +142,7 @@ if [[ "$vm_type" == "none" ]]; then
     fi
 
     # Remove VirtualBox packages
-    vbox_pkgs=$(pacman -Qsq '^virtualbox' 2>/dev/null)
+    vbox_pkgs="virtualbox-guest-utils"
     if [[ -n "$vbox_pkgs" ]]; then
         echo "Removing VirtualBox packages: $vbox_pkgs"
         sudo pacman -Rns --noconfirm $vbox_pkgs
