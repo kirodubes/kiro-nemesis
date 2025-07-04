@@ -119,10 +119,9 @@ sudo hardcode-fixer
 echo
 tput setaf 2
 echo "########################################################################"
-echo "################### Want to go to fish or stay in bash"
+echo "################### Do you want to go to fish or stay in bash"
 echo "########################################################################"
 tput sgr0
-echo
 echo
 
 # Confirm the Fish shell is installed
@@ -134,7 +133,7 @@ fi
 # Show current shell
 echo
 echo "########################################################################"
-echo "Current shell: $SHELL" - tobash, tofish, tozsh are available
+echo "Current shell: $SHELL" - tobash, tofish, tozsh are later still available
 echo "########################################################################"
 echo
 

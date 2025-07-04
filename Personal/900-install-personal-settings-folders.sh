@@ -160,7 +160,7 @@ gsettings set org.blueberry use-symbolic-icons false
 
 echo
 echo "VirtualBox check - copy/paste template or not"
-echo "Works only on Bash"
+# Works only on Bash
 echo
 
 result=$(systemd-detect-virt)
