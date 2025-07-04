@@ -124,59 +124,6 @@ echo "Enable fstrim timer"
 sudo systemctl enable fstrim.timer
 echo
 
-echo
-tput setaf 2
-echo "################################################################################"
-echo "Removal of virtual machine software"
-echo "################################################################################"
-tput sgr0
-echo
-
-# Detect virtualization environment
-vm_type=$(systemd-detect-virt)
-echo "Detected environment: $vm_type"
-
-# Only proceed if NOT running inside a virtual machine
-if [[ "$vm_type" == "none" ]]; then
-    echo "Running on real hardware. Proceeding with cleanup..."
-
-    # Disable and stop qemu-guest-agent.service if present
-    if systemctl list-units --full -all | grep -q 'qemu-guest-agent.service'; then
-        echo "Disabling qemu-guest-agent.service..."
-        sudo systemctl stop qemu-guest-agent.service
-        sudo systemctl disable qemu-guest-agent.service
-    fi
-
-    # Disable and stop vboxservice.service if present
-    if systemctl list-units --full -all | grep -q 'vboxservice.service'; then
-        echo "Disabling vboxservice.service..."
-        sudo systemctl stop vboxservice.service
-        sudo systemctl disable vboxservice.service
-    fi
-
-    # Remove QEMU packages if installed
-    qemu_pkgs=$(pacman -Qsq '^qemu' 2>/dev/null)
-    if [[ -n "$qemu_pkgs" ]]; then
-        echo "Removing QEMU packages: $qemu_pkgs"
-        sudo pacman -Rns --noconfirm $qemu_pkgs
-    else
-        echo "No QEMU packages found."
-    fi
-
-    # Remove VirtualBox packages if installed
-    vbox_pkgs=$(pacman -Qsq '^virtualbox' 2>/dev/null)
-    if [[ -n "$vbox_pkgs" ]]; then
-        echo "Removing VirtualBox packages: $vbox_pkgs"
-        sudo pacman -Rns --noconfirm $vbox_pkgs
-    else
-        echo "No VirtualBox packages found."
-    fi
-
-    echo "Cleanup complete."
-else
-    echo "Virtual machine detected ($vm_type). No action taken."
-fi
-
 # personal /etc/pacman.d/gnupg/gpg.conf for Erik Dubois
 
 echo

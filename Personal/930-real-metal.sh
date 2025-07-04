@@ -71,13 +71,12 @@ fi
 ##############################################################################################################
 
 install_packages() {
-    local packages=(
-        insync
-        signal-desktop
-        signal-in-tray
-    )
+    if [ "$#" -eq 0 ]; then
+        echo "No packages provided to install."
+        return 1
+    fi
 
-    for pkg in "${packages[@]}"; do
+    for pkg in "$@"; do
         echo
         echo "Installing package: $pkg"
         sudo pacman -S --noconfirm --needed "$pkg"
@@ -105,91 +104,62 @@ remove_if_installed() {
 ##############################################################################################################
 
 echo
-tput setaf 2
-echo "################################################################################"
-echo "Updating the system - sudo pacman -Syyu"
-echo "################################################################################"
-tput sgr0
-echo
-
-sudo pacman -Syyu --noconfirm
-
-echo
-tput setaf 2
-echo "################################################################################"
-echo "Removing selected packages"
-echo "################################################################################"
-tput sgr0
-echo
-
-remove_if_installed \
-    adobe-source-han-sans-cn-fonts \
-    adobe-source-han-sans-jp-fonts \
-    adobe-source-han-sans-kr-fonts \
-    xfsprogs \
-    btrfs-progs \
-    jfsutils \
-    mkinitcpio-nfs-utils \
-    xfburn
-
-echo
-tput setaf 2
-echo "################################################################################"
-echo "Installing selected packages"
-echo "################################################################################"
-tput sgr0
-echo
-
-install_packages
-
-echo
-tput setaf 2
+tput setaf 3
 echo "########################################################################"
-echo "################### Build from AUR"
+echo "################### Removal of virtual machine software"
 echo "########################################################################"
 tput sgr0
 echo
 
-if ! pacman -Qi opera &>/dev/null; then
-    if command -v yay >/dev/null 2>&1; then
-        yay -S opera --noconfirm
-    else
-        echo "Yay is not installed. Skipping Opera installation."
+# Detect virtualization environment
+vm_type=$(systemd-detect-virt)
+echo "Detected environment: $vm_type"
+
+# Only proceed if NOT running inside a virtual machine
+if [[ "$vm_type" == "none" ]]; then
+    echo "Running on real hardware. Proceeding with cleanup..."
+
+    # Disable and stop qemu-guest-agent.service if present
+    if systemctl list-units --full -all | grep -q 'qemu-guest-agent.service'; then
+        echo "Disabling qemu-guest-agent.service..."
+        sudo systemctl stop qemu-guest-agent.service
+        sudo systemctl disable qemu-guest-agent.service
     fi
+
+    # Disable and stop vboxservice.service if present
+    if systemctl list-units --full -all | grep -q 'vboxservice.service'; then
+        echo "Disabling vboxservice.service..."
+        sudo systemctl stop vboxservice.service
+        sudo systemctl disable vboxservice.service
+    fi
+
+    # Remove QEMU packages if installed
+    qemu_pkgs=$(pacman -Qsq '^qemu' 2>/dev/null)
+    if [[ -n "$qemu_pkgs" ]]; then
+        echo "Removing QEMU packages: $qemu_pkgs"
+        sudo pacman -Rns --noconfirm $qemu_pkgs
+    else
+        echo "No QEMU packages found."
+    fi
+
+    # Remove VirtualBox packages if installed
+    vbox_pkgs=$(pacman -Qsq '^virtualbox' 2>/dev/null)
+    if [[ -n "$vbox_pkgs" ]]; then
+        echo "Removing VirtualBox packages: $vbox_pkgs"
+        sudo pacman -Rns --noconfirm $vbox_pkgs
+    else
+        echo "No VirtualBox packages found."
+    fi
+
+    echo "Cleanup complete."
 else
-    echo "Opera is already installed."
+    echo "Virtual machine detected ($vm_type). No action taken."
 fi
 
 echo
-tput setaf 3
-echo "################################################################################"
-echo "End build from AUR"
-echo "################################################################################"
+tput setaf 6
+echo "##############################################################"
+echo "###################  $(basename $0) done"
+echo "##############################################################"
 tput sgr0
 echo
-
-
-echo
-tput setaf 3
-echo "########################################################################"
-echo "################### Going to the Personal folder"
-echo "########################################################################"
-tput sgr0
-echo
-
-cd "$installed_dir/Personal" || { echo "Cannot cd to $installed_dir/Personal"; exit 1; }
-
-# chadwm autologin
-# Run scripts if they exist and are executable
-[[ -x fix-sddm-conf ]] && ./fix-sddm-conf
-
-for script in 900-* 910-* 920-* 930-* 990-* 999-*; do
-    [[ -x "$script" ]] && ./"$script"
-done
-
-
-tput setaf 3
-echo "########################################################################"
-echo "End current choices"
-echo "########################################################################"
-tput sgr0
