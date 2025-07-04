@@ -87,7 +87,7 @@ echo "result = "$result
 echo
 tput setaf 3
 echo "########################################################################"
-echo "################### VirtualBox check - copy/paste template or not"
+echo "################### VirtualBox check - Copy/paste VB template or not"
 echo "########################################################################"
 tput sgr0
 echo
