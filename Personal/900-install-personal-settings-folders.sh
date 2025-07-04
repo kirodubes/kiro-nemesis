@@ -160,17 +160,10 @@ gsettings set org.blueberry use-symbolic-icons false
 
 echo
 echo "VirtualBox check - copy/paste template or not"
+echo "Works only on Bash"
 echo
 
-# Detect shell and assign result accordingly
-if [ -n "$BASH_VERSION" ]; then
-    result=$(systemd-detect-virt)
-elif [ -n "$FISH_VERSION" ]; then
-    set result (systemd-detect-virt)
-else
-    echo "Unsupported shell"
-    exit 1
-fi
+result=$(systemd-detect-virt)
 
 if [ $result = "none" ];then
 

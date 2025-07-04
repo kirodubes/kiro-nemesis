@@ -134,7 +134,7 @@ fi
 # Show current shell
 echo
 echo "########################################################################"
-echo "Current shell: $SHELL"
+echo "Current shell: $SHELL" - tobash, tofish, tozsh are available
 echo "########################################################################"
 echo
 
@@ -143,11 +143,15 @@ read -rp "Do you want to switch your default shell to Fish? [Y/n] " answer
 
 # Convert to lowercase and check
 if [[ "$answer" =~ ^[Yy]$ || -z "$answer" ]]; then
+    echo
     echo "Changing default shell to Fish..."
     sudo chsh "$USER" -s /bin/fish
     echo "Shell changed. It will apply after you log out and log back in."
+    echo
 else
+    echo
     echo "Shell change cancelled. Staying on Bash"
+    echo
 fi
 
 echo
