@@ -185,10 +185,45 @@ echo
 echo "Getting default sddm configuration - autologin for user in chadwm"
 echo "Changing /etc/sddm.conf.d/kde_settings.conf"
 echo
-[[ -x fix-sddm-conf ]] && sudo fix-sddm-conf
+
+# URL of the file to download
+URL="https://raw.githubusercontent.com/erikdubois/arcolinux-nemesis/refs/heads/master/Personal/settings/sddm/kde_settings.conf"
+
+# Target directory and filename
+TARGET_DIR="/etc/sddm.conf.d"
+TARGET_FILE="$TARGET_DIR/kde_settings.conf"
+
+# Create the directory if it doesn't exist
+sudo mkdir -p "$TARGET_DIR"
+
+# Download the file to a temporary location
+TMP_FILE=$(mktemp)
+curl -fsSL "$URL" -o "$TMP_FILE"
+
+# Check if download succeeded
+if [[ $? -ne 0 ]]; then
+  echo "Error: Failed to download file from $URL"
+  exit 1
+fi
+
+# Replace or insert the User field
+if grep -q "^User=" "$TMP_FILE"; then
+  sed -i "s/^User=.*/User=$USER/" "$TMP_FILE"
+else
+  echo -e "\nUser=$USER" >> "$TMP_FILE"
+fi
+
+# Move the modified file to the target location
+sudo mv "$TMP_FILE" "$TARGET_FILE"
+
+echo "SDDM configuration installed and set User=$USER at $TARGET_FILE"
+
 
 echo
-echo "Check"
+tput setaf 3
+echo "Check if sddm configuration is correct"
+tput sgr0
+echo
 CONF_FILE="/etc/sddm.conf.d/kde_settings.conf"
 
 if [[ -f "$CONF_FILE" ]]; then
