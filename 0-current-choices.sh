@@ -181,6 +181,7 @@ cd "$installed_dir/Personal" || { echo "Cannot cd to $installed_dir/Personal"; e
 
 # chadwm autologin
 # Run scripts if they exist and are executable
+echo "Getting default sddm configuration - autologin for user in chadwm"
 [[ -x fix-sddm-conf ]] && fix-sddm-conf
 
 for script in 900-* 910-* 920-* 930-* 990-* 999-*; do
