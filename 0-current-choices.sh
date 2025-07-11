@@ -183,7 +183,7 @@ cd "$installed_dir/Personal" || { echo "Cannot cd to $installed_dir/Personal"; e
 # Run scripts if they exist and are executable
 echo "Getting default sddm configuration - autologin for user in chadwm"
 echo "Changing /etc/sddm.conf.d/kde_settings.conf"
-[[ -x fix-sddm-conf ]] && fix-sddm-conf
+[[ -x fix-sddm-conf ]] && sudo fix-sddm-conf
 
 for script in 900-* 910-* 920-* 930-* 990-* 999-*; do
     [[ -x "$script" ]] && ./"$script"
