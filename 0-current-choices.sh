@@ -187,6 +187,23 @@ echo "Changing /etc/sddm.conf.d/kde_settings.conf"
 echo
 [[ -x fix-sddm-conf ]] && sudo fix-sddm-conf
 
+echo
+echo "Check"
+CONF_FILE="/etc/sddm.conf.d/kde_settings.conf"
+
+if [[ -f "$CONF_FILE" ]]; then
+    if grep -q "User=$USER" "$CONF_FILE" && grep -q "Session=chadwm" "$CONF_FILE"; then
+        echo "✅ Autologin is correctly configured for user '$USER' with session 'chadwm'."
+    else
+        echo "❌ Autologin is missing or incorrect in $CONF_FILE:"
+        grep -E "User=|Session=" "$CONF_FILE"
+    fi
+else
+    echo "❌ File $CONF_FILE does not exist."
+fi
+
+echo
+
 for script in 900-* 910-* 920-* 930-* 990-* 999-*; do
     [[ -x "$script" ]] && ./"$script"
 done
