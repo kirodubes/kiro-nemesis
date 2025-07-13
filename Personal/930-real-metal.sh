@@ -27,29 +27,6 @@ set -uo pipefail  # Do not use set -e, we want to continue on error
 #tput sgr0
 ##################################################################################################################################
 
-# Error handling
-trap 'on_error $LINENO "$BASH_COMMAND"' ERR
-
-on_error() {
-    local lineno="$1"
-    local cmd="$2"
-
-    local RED=$(tput setaf 1)
-    local YELLOW=$(tput setaf 3)
-    local RESET=$(tput sgr0)
-
-    echo
-    echo "${RED}ERROR DETECTED${RESET}"
-    echo "${YELLOW}Line: $lineno"
-    echo "Command: '$cmd'"
-    echo "Waiting 10 seconds before continuing...${RESET}"
-    echo
-
-    sleep 10
-}
-
-##################################################################################################################################
-
 # Get current directory of the script
 installed_dir="$(dirname "$(readlink -f "$0")")"
 
@@ -103,38 +80,86 @@ remove_if_installed() {
 
 ##############################################################################################################
 
-if [ ! -f /usr/bin/hwinfo ]; then
-  sudo pacman -S --noconfirm --needed hwinfo
-fi
+result=$(systemd-detect-virt)
 
-if hwinfo | grep "CORSAIR K70" > /dev/null 2>&1 ; then
+echo
+echo "result = "$result
+echo
+tput setaf 3
+echo "########################################################################"
+echo "################### VirtualBox check - Copy/paste VB template or not"
+echo "########################################################################"
+tput sgr0
+echo
 
-	echo
-	tput setaf 2
-	echo "########################################################################"
-	echo "################### Corsair keyboard to be installed"
-	echo "########################################################################"
-	tput sgr0
-	echo
+if [ $result = "none" ];then
 
-	sudo pacman -S --noconfirm --needed ckb-next-git
-	installed_dir=$(pwd)
-	[ -d $HOME"/.config/ckb-next" ] || mkdir -p $HOME"/.config/ckb-next"
+    [ -d $HOME"/VirtualBox VMs" ] || mkdir -p $HOME"/VirtualBox VMs"
+    sudo cp -rf settings/virtualbox-template/* ~/VirtualBox\ VMs/
+    cd ~/VirtualBox\ VMs/
+    tar -xzf template.tar.gz
+    rm -f template.tar.gz   
 
-	cp -r $installed_dir/settings/ckb-next/ckb-next.conf ~/.config/ckb-next.conf
-	cp -f $installed_dir/settings/ckb-next/ckb-next.autostart.desktop ~/.config/autostart/ckb-next.autostart.desktop
-	
-	sudo systemctl enable ckb-next-daemon
-	sudo systemctl start ckb-next-daemon
+else
 
-	echo
-	tput setaf 6
-	echo "########################################################################"
-	echo "################### Corsair keyboard installed"
-	echo "########################################################################"
-	tput sgr0
-	echo
+    echo
+    tput setaf 3
+    echo "########################################################################"
+    echo "### You are on a virtual machine - skipping VirtualBox"
+    echo "### Template not copied over"
+    echo "### We will set your screen resolution with xrandr"
+    echo "########################################################################"
+    tput sgr0
+    echo
 
+    # Find the connected VirtualBox display
+    OUTPUT=$(xrandr | grep " connected" | awk '{print $1}')
+
+    # Fallback check
+    if [ -z "$OUTPUT" ]; then
+        echo "No connected display found."
+        exit 1
+    fi
+
+    # Apply desired resolution and position
+    xrandr --output "$OUTPUT" --primary --mode 1920x1080 --pos 0x0 --rotate normal
+
+    echo "Display settings applied to output: $OUTPUT"
+
+    fi
+
+tput setaf 3
+echo "########################################################################"
+echo "################### Removal of virtual machine software"
+echo "########################################################################"
+tput sgr0
+echo
+
+# Proceed only if running on real hardware
+if [[ "$result" == "none" ]]; then
+    echo "Running on real hardware. Proceeding with cleanup..."
+
+    # Disable and stop qemu-guest-agent.service if present
+    if systemctl list-units --full --all | grep -q 'qemu-guest-agent.service'; then
+        echo "Disabling qemu-guest-agent.service..."
+        sudo systemctl stop qemu-guest-agent.service
+        sudo systemctl disable qemu-guest-agent.service
+    fi
+
+    # Disable and stop vboxservice.service if present
+    if systemctl list-units --full --all | grep -q 'vboxservice.service'; then
+        echo "Disabling vboxservice.service..."
+        sudo systemctl stop vboxservice.service
+        sudo systemctl disable vboxservice.service
+    fi
+
+    # Remove QEMU packages
+    remove_if_installed qemu-guest-agent
+    # Remove VirtualBox packages
+    remove_if_installed virtualbox-guest-utils
+
+else
+    echo "Virtual machine detected ($result). No action taken."
 fi
 
 echo

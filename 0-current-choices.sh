@@ -1,16 +1,31 @@
 #!/bin/bash
-#set -e
-##############################################################################################################
+set -uo pipefail  # Do not use set -e, we want to continue on error
+##################################################################################################################
 # Author    : Erik Dubois
 # Website   : https://www.erikdubois.be
 # Youtube   : https://youtube.com/erikdubois
-##############################################################################################################
+# Github    : https://github.com/erikdubois
+# Github    : https://github.com/kirodubes
+# Github    : https://github.com/buildra
+# SF        : https://sourceforge.net/projects/kiro/files/
+##################################################################################################################
 #
 #   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
 #
-##############################################################################################################
+##################################################################################################################################
+#tput setaf 0 = black
+#tput setaf 1 = red
+#tput setaf 2 = green
+#tput setaf 3 = yellow
+#tput setaf 4 = dark blue
+#tput setaf 5 = purple
+#tput setaf 6 = cyan
+#tput setaf 7 = gray
+#tput setaf 8 = light blue
 
-set -uo pipefail  # safer error handling (no unbound vars, no silent pipe fails)
+#end colors
+#tput sgr0
+##################################################################################################################################
 
 # Error handling
 trap 'on_error $LINENO "$BASH_COMMAND"' ERR
@@ -33,8 +48,12 @@ on_error() {
     sleep 10
 }
 
+##################################################################################################################################
+
 # Get current directory of the script
 installed_dir="$(dirname "$(readlink -f "$0")")"
+
+##################################################################################################################################
 
 # Debug mode switch
 export DEBUG=false
@@ -64,6 +83,8 @@ install_packages() {
         sudo pacman -S --noconfirm --needed "$pkg"
     done
 }
+
+##################################################################################################################################
 
 remove_if_installed() {
     for pattern in "$@"; do
@@ -101,14 +122,15 @@ echo "##########################################################################
 tput sgr0
 echo
 
-remove_if_installed adobe-source-han-sans-cn-fonts
-remove_if_installed adobe-source-han-sans-jp-fonts
-remove_if_installed adobe-source-han-sans-kr-fonts
-remove_if_installed xfsprogs
-remove_if_installed btrfs-progs
-remove_if_installed jfsutils
-remove_if_installed mkinitcpio-nfs-utils
-remove_if_installed xfburn
+remove_if_installed \
+    adobe-source-han-sans-cn-fonts \
+    adobe-source-han-sans-jp-fonts \
+    adobe-source-han-sans-kr-fonts \
+    xfsprogs \
+    btrfs-progs \
+    jfsutils \
+    mkinitcpio-nfs-utils \
+    xfburn
 
 echo
 tput setaf 2
@@ -129,11 +151,14 @@ tput sgr0
 echo
 
 if ! pacman -Qi opera &>/dev/null; then
-    yay -S opera --noconfirm
+    if command -v yay >/dev/null 2>&1; then
+        yay -S opera --noconfirm
+    else
+        echo "Yay is not installed. Skipping Opera installation."
+    fi
 else
     echo "Opera is already installed."
 fi
-
 
 echo
 tput setaf 3
@@ -152,17 +177,71 @@ echo "########################################################################"
 tput sgr0
 echo
 
-installed_dir=$(dirname $(readlink -f $(basename `pwd`)))
-cd $installed_dir/Personal
+cd "$installed_dir/Personal" || { echo "Cannot cd to $installed_dir/Personal"; exit 1; }
 
 # chadwm autologin
-sh fix-sddm-conf
+# Run scripts if they exist and are executable
+echo
+echo "Getting default sddm configuration - autologin for user in chadwm"
+echo "Changing /etc/sddm.conf.d/kde_settings.conf"
+echo
 
-sh 900-*
-sh 910-*
-sh 920-*
-sh 990-*
-sh 999-*
+# URL of the file to download
+URL="https://raw.githubusercontent.com/erikdubois/arcolinux-nemesis/refs/heads/master/Personal/settings/sddm/kde_settings.conf"
+
+# Target directory and filename
+TARGET_DIR="/etc/sddm.conf.d"
+TARGET_FILE="$TARGET_DIR/kde_settings.conf"
+
+# Create the directory if it doesn't exist
+sudo mkdir -p "$TARGET_DIR"
+
+# Download the file to a temporary location
+TMP_FILE=$(mktemp)
+curl -fsSL "$URL" -o "$TMP_FILE"
+
+# Check if download succeeded
+if [[ $? -ne 0 ]]; then
+  echo "Error: Failed to download file from $URL"
+  exit 1
+fi
+
+# Replace or insert the User field
+if grep -q "^User=" "$TMP_FILE"; then
+  sed -i "s/^User=.*/User=$USER/" "$TMP_FILE"
+else
+  echo -e "\nUser=$USER" >> "$TMP_FILE"
+fi
+
+# Move the modified file to the target location
+sudo mv "$TMP_FILE" "$TARGET_FILE"
+
+echo "SDDM configuration installed and set User=$USER at $TARGET_FILE"
+
+
+echo
+tput setaf 3
+echo "Check if sddm configuration is correct"
+tput sgr0
+echo
+CONF_FILE="/etc/sddm.conf.d/kde_settings.conf"
+
+if [[ -f "$CONF_FILE" ]]; then
+    if grep -q "User=$USER" "$CONF_FILE" && grep -q "Session=chadwm" "$CONF_FILE"; then
+        echo "✅ Autologin is correctly configured for user '$USER' with session 'chadwm'."
+    else
+        echo "❌ Autologin is missing or incorrect in $CONF_FILE:"
+        grep -E "User=|Session=" "$CONF_FILE"
+    fi
+else
+    echo "❌ File $CONF_FILE does not exist."
+fi
+
+echo
+
+for script in 900-* 910-* 920-* 930-* 990-* 999-*; do
+    [[ -x "$script" ]] && ./"$script"
+done
 
 
 tput setaf 3
