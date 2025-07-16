@@ -115,6 +115,8 @@ echo
 
 sudo pacman -Syyu --noconfirm
 
+sleep 2
+
 echo
 tput setaf 2
 echo "################################################################################"
