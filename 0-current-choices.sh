@@ -94,7 +94,7 @@ remove_if_installed() {
         if [ -n "$matches" ]; then
             for pkg in $matches; do
                 echo "Removing package: $pkg"
-                sudo pacman -R --noconfirm "$pkg"
+                sudo pacman -Rns --noconfirm "$pkg"
             done
         else
             echo "No packages matching '$pattern' are installed."
@@ -126,11 +126,13 @@ remove_if_installed \
     adobe-source-han-sans-cn-fonts \
     adobe-source-han-sans-jp-fonts \
     adobe-source-han-sans-kr-fonts \
-    xfsprogs \
     btrfs-progs \
     jfsutils \
     mkinitcpio-nfs-utils \
-    xfburn
+    vim \
+    xfburn \
+    xfsprogs
+
 
 echo
 tput setaf 2
