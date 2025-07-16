@@ -95,6 +95,7 @@ remove_if_installed() {
             for pkg in $matches; do
                 echo "Removing package: $pkg"
                 sudo pacman -R --noconfirm "$pkg"
+                sleep 1
             done
         else
             echo "No packages matching '$pattern' are installed."
