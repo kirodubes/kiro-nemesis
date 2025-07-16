@@ -29,6 +29,8 @@ workdir=$(pwd)
 
 ##################################################################################################################
 
+git pull
+
 # Below command will backup everything inside the project folder
 git add --all .
 
