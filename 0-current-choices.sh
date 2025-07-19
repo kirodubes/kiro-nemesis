@@ -70,6 +70,26 @@ fi
 
 ##############################################################################################################
 
+check_pacman_lock() {
+    local MAX_WAIT=30        # Total maximum wait time in seconds
+    local WAIT_INTERVAL=5    # Time to wait between checks
+    local elapsed=0
+
+    while [ -e "/var/lib/pacman/db.lck" ]; do
+        echo "Pacman is locked. Waiting $WAIT_INTERVAL seconds..."
+        sleep "$WAIT_INTERVAL"
+        elapsed=$((elapsed + WAIT_INTERVAL))
+
+        if [ "$elapsed" -ge "$MAX_WAIT" ]; then
+            echo "Warning: Removing /var/lib/pacman/db.lck after $MAX_WAIT seconds!"
+            sudo rm -f /var/lib/pacman/db.lck
+            break
+        fi
+    done
+}
+
+##############################################################################################################
+
 install_packages() {
     local packages=(
         insync
@@ -80,6 +100,7 @@ install_packages() {
     for pkg in "${packages[@]}"; do
         echo
         echo "Installing package: $pkg"
+        check_pacman_lock
         sudo pacman -S --noconfirm --needed "$pkg"
     done
 }
@@ -94,8 +115,8 @@ remove_if_installed() {
         if [ -n "$matches" ]; then
             for pkg in $matches; do
                 echo "Removing package: $pkg"
+                check_pacman_lock
                 sudo pacman -R --noconfirm "$pkg"
-                sleep 1
             done
         else
             echo "No packages matching '$pattern' are installed."
@@ -113,9 +134,8 @@ echo "##########################################################################
 tput sgr0
 echo
 
+check_pacman_lock
 sudo pacman -Syyu --noconfirm
-
-sleep 2
 
 echo
 tput setaf 2
