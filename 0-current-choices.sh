@@ -153,6 +153,7 @@ remove_if_installed \
     jfsutils \
     mkinitcpio-nfs-utils \
     vim \
+    vlc-plugins-all \
     xfburn \
     xfsprogs
 
