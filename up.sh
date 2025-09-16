@@ -40,8 +40,7 @@ git commit -m "update"
 
 # Push the local files to github
 
-branch=$(git rev-parse --abbrev-ref HEAD)
-git push -u origin "$branch"
+git push -u origin main
 
 echo
 tput setaf 6
