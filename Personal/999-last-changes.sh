@@ -154,6 +154,13 @@ else
 fi
 
 echo
+echo "Since I have an intel cpu I will install intel-ucode ..."
+sudo pacman -S --noconfirm intel-ucode
+echo "There is also the package amd-ucode for Amd cpus"
+echo "Change to what you need"
+echo
+
+echo
 tput setaf 6
 echo "##############################################################"
 echo "###################  $(basename $0) done"
