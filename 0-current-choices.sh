@@ -95,6 +95,7 @@ install_packages() {
         insync
         signal-desktop
         signal-in-tray
+        intel-ucode
     )
 
     for pkg in "${packages[@]}"; do
