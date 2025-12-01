@@ -116,6 +116,17 @@ echo "Wait for it ..."
 
 sudo hardcode-fixer
 
+
+echo
+echo "Since I have an intel cpu I will install intel-ucode ..."
+sudo pacman -S --noconfirm intel-ucode
+echo
+echo
+echo "Intel-ucode for intel cpus has been installed"
+echo "There is also the package amd-ucode for Amd cpus"
+echo "Change to what you need"
+echo
+
 echo
 tput setaf 2
 echo "########################################################################"
@@ -153,15 +164,7 @@ else
     echo
 fi
 
-echo
-echo "Since I have an intel cpu I will install intel-ucode ..."
-sudo pacman -S --noconfirm intel-ucode
-echo
-echo
-echo "Intel-ucode for intel cpus has been installed"
-echo "There is also the package amd-ucode for Amd cpus"
-echo "Change to what you need"
-echo
+
 
 echo
 tput setaf 6
