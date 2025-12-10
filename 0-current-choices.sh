@@ -185,15 +185,15 @@ else
     echo "Opera is already installed."
 fi
 
-if ! pacman -Qi opera-ffmpeg-codecs-bin &>/dev/null; then
-    if command -v yay >/dev/null 2>&1; then
-        yay -S opera-ffmpeg-codecs-bin --noconfirm
-    else
-        echo "Yay is not installed. Skipping opera-ffmpeg-codecs-bin installation."
-    fi
-else
-    echo "opera-ffmpeg-codecs-bin is already installed."
-fi
+# if ! pacman -Qi opera-ffmpeg-codecs-bin &>/dev/null; then
+#     if command -v yay >/dev/null 2>&1; then
+#         yay -S opera-ffmpeg-codecs-bin --noconfirm
+#     else
+#         echo "Yay is not installed. Skipping opera-ffmpeg-codecs-bin installation."
+#     fi
+# else
+#     echo "opera-ffmpeg-codecs-bin is already installed."
+# fi
 
 echo
 tput setaf 3
