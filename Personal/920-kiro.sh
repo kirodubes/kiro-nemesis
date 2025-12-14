@@ -136,6 +136,19 @@ echo
 sudo cp -v gpg.conf /etc/pacman.d/gnupg/gpg.conf
 echo
 
+echo
+tput setaf 2
+echo "########################################################################"
+echo "################### Build from install folder"
+echo "########################################################################"
+tput sgr0
+echo
+
+if ! pacman -Qi pamac-aur &>/dev/null; then
+    yay -S pamac-aur --noconfirm
+else
+    echo "pamac-aur is already installed."
+fi
 
 echo
 tput setaf 6
