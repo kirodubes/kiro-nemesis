@@ -131,6 +131,14 @@ if [ -f /usr/local/bin/get-kiro-nemesis-on-arcana ]; then
     echo
     tput setaf 2
     echo "################################################################################"
+    echo "We are on Arcana"
+    echo "################################################################################"
+    tput sgr0
+    echo
+
+    echo
+    tput setaf 2
+    echo "################################################################################"
     echo "Installing Chaotic keyring and Chaotic mirrorlist"
     echo "################################################################################"
     tput sgr0
