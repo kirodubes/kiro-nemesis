@@ -126,6 +126,53 @@ remove_if_installed() {
 
 ##############################################################################################################
 
+if [ -f /usr/local/bin/get-kiro-nemesis-on-arcana ]; then
+
+    echo
+    tput setaf 2
+    echo "################################################################################"
+    echo "Installing Chaotic keyring and Chaotic mirrorlist"
+    echo "################################################################################"
+    tput sgr0
+    echo
+
+    for pkg in packages/*.pkg.tar.zst; do
+        [ -f "$pkg" ] && sudo pacman -U --noconfirm "$pkg"
+    done
+
+    # personal pacman.conf for Erik Dubois
+    if [[ ! -f /etc/pacman.conf.nemesis ]]; then
+        echo
+        tput setaf 2
+        echo "################################################################################"
+        echo "Copying /etc/pacman.conf to /etc/pacman.conf.nemesis"
+        echo "Use npacman when on ArcoLinux to inspect"
+        echo "Use nano /etc/pacman.conf to inspect"
+        echo "################################################################################"
+        tput sgr0
+        echo
+        sudo cp -v /etc/pacman.conf /etc/pacman.conf.nemesis
+        echo
+    else
+        echo
+        tput setaf 2
+        echo "################################################################################"
+        echo "Backup already exists: /etc/pacman.conf.nemesis"
+        echo "Use npacman when on ArcoLinux to inspect"
+        echo "Use nano /etc/pacman.conf to inspect"
+        echo "################################################################################"
+        tput sgr0
+        echo
+    fi
+
+    sudo cp -v pacman.conf /etc/pacman.conf
+    sudo cp -v pacman.conf /etc/pacman.conf.edu
+    echo
+    echo "/etc/pacman.conf.edu is there to have a backup"
+    echo
+
+fi
+
 echo
 tput setaf 2
 echo "################################################################################"
