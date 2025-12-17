@@ -95,6 +95,8 @@ install_packages() {
         insync
         signal-desktop
         signal-in-tray
+        fish
+        hardcode-fixer-git
     )
 
     for pkg in "${packages[@]}"; do
