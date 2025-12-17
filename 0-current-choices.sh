@@ -97,6 +97,7 @@ install_packages() {
         signal-in-tray
         fish
         hardcode-fixer-git
+        gconf2
     )
 
     for pkg in "${packages[@]}"; do
