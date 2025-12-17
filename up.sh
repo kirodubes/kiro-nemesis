@@ -29,18 +29,45 @@ workdir=$(pwd)
 
 ##################################################################################################################
 
-git pull
+./chaotic
+
+rm $workdir/mirrorlist
+touch $workdir/mirrorlist
+
+echo
+echo "## Best Arch Linux servers worldwide from arcolinux-nemesis
+
+Server = https://mirror.osbeck.com/archlinux/\$repo/os/\$arch
+Server = http://mirror.osbeck.com/archlinux/\$repo/os/\$arch
+Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch
+Server = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch
+Server = http://mirror.rackspace.com/archlinux/\$repo/os/\$arch
+Server = https://mirror.rackspace.com/archlinux/\$repo/os/\$arch" | tee $workdir/mirrorlist
+echo
+echo "getting mirrorlist"
+wget "https://archlinux.org/mirrorlist/?country=all&protocol=http&protocol=https&ip_version=4&ip_version=6" -O ->> $workdir/mirrorlist
+sed -i "s/#Server/Server/g" $workdir/mirrorlist
 
 # Below command will backup everything inside the project folder
 git add --all .
 
+# Give a comment to the commit if you want
+echo
+echo "####################################"
+echo "Write your commit comment!"
+echo "####################################"
+echo
+
+input="update"
+
 # Committing to the local repository with a message containing the time details and commit text
 
-git commit -m "update"
+git commit -m "$input"
 
 # Push the local files to github
 
-git push -u origin main
+branch=$(git rev-parse --abbrev-ref HEAD)
+git push -u origin "$branch"
 
 echo
 tput setaf 6
@@ -49,3 +76,4 @@ echo "###################  $(basename $0) done"
 echo "##############################################################"
 tput sgr0
 echo
+
