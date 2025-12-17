@@ -98,6 +98,7 @@ install_packages() {
         fish
         hardcode-fixer-git
         glib2
+        blueberry
     )
 
     for pkg in "${packages[@]}"; do
